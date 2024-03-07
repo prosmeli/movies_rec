@@ -120,5 +120,20 @@ def user_recommendations(user_id):
     return render_template('index.html', recommended_movies=recommended_movies, user_id=user_id, current_year=current_year)
 
 
+@app.route('/api/user_id/<int:user_id>', methods=['GET'])
+def user_recommendations_api(user_id):
+    movie_ratings_df = load_data()
+    recommended_movies = recommend_movies_for_user(movie_ratings_df, user_id)
+
+    # Convert the set to a list if recommended_movies is a set
+    if isinstance(recommended_movies, set):
+        recommended_movies = list(recommended_movies)
+    
+    return jsonify({
+        'user_id': user_id,
+        'recommended_movies': recommended_movies
+    })
+
+
 if __name__ == '__main__':
     app.run(debug=True)
